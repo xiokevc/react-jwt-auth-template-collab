@@ -1,12 +1,10 @@
-import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate } from 'react-router';
+
 import { signUp } from '../../services/authService';
-import { UserContext } from '../../contexts/UserContext';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext);
-
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
     username: '',
@@ -17,69 +15,68 @@ const SignUpForm = () => {
   const { username, password, passwordConf } = formData;
 
   const handleChange = (evt) => {
-    const { name, value } = evt.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const isFormInvalid = () => {
-    return !(username && password && password === passwordConf);
+    setMessage('');
+    setFormData({ ...formData, [evt.target.name]: evt.target.value });
   };
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     try {
-      const newUser = await signUp(formData);
-      setUser(newUser);
-      navigate('/');
-    } catch (err) {
-      setMessage(err.message);
+        const newUser = await signUp(formData);
+        console.log(newUser);
+    } catch (error) {
+        setMessage(error.message);
     }
   };
 
+  const isFormInvalid = () => {
+    return !(username && password && password === passwordConf);
+  };
+  
   return (
-    <form onSubmit={handleSubmit}>
-      <h2>Sign Up</h2>
-      {message && <p style={{ color: 'red' }}>{message}</p>}
-
-      <label>
-        Username:
-        <input
-          name="username"
-          value={username}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Password:
-        <input
-          type="password"
-          name="password"
-          value={password}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <label>
-        Confirm Password:
-        <input
-          type="password"
-          name="passwordConf"
-          value={passwordConf}
-          onChange={handleChange}
-          required
-        />
-      </label>
-
-      <button type="submit" disabled={isFormInvalid()}>
-        Sign Up
-      </button>
-    </form>
+    <main>
+      <h1>Sign Up</h1>
+      <p>{message}</p>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor='username'>Username:</label>
+          <input
+            type='text'
+            id='name'
+            value={username}
+            name='username'
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor='password'>Password:</label>
+          <input
+            type='password'
+            id='password'
+            value={password}
+            name='password'
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <label htmlFor='confirm'>Confirm Password:</label>
+          <input
+            type='password'
+            id='confirm'
+            value={passwordConf}
+            name='passwordConf'
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div>
+          <button disabled={isFormInvalid()}>Sign Up</button>
+          <button onClick={() => navigate('/')}>Cancel</button>
+        </div>
+      </form>
+    </main>
   );
 };
 
