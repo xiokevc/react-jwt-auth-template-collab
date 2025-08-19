@@ -22,7 +22,8 @@ const SignUpForm = () => {
     evt.preventDefault();
     try {
         const newUser = await signUp(formData);
-        console.log(newUser);
+        setUser(newUser);
+        navigate('/');
     } catch (error) {
         setMessage(error.message);
     }
